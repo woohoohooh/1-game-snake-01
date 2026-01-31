@@ -1,0 +1,617 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Epic Idle Clicker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0c0c2e 0%, #1a1a3e 100%);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 3px solid #ffd700;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(to right, #ffd700, #ffaa00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            color: #aaa;
+            font-size: 1.1rem;
+            margin-top: 5px;
+        }
+
+        .main-click-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .clicker {
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, #2a2a5a 0%, #1a1a3e 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 0 40px rgba(0, 150, 255, 0.3),
+                        inset 0 0 40px rgba(0, 0, 0, 0.5);
+            border: 5px solid #3a3a7a;
+            transition: transform 0.1s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .clicker:active {
+            transform: scale(0.95);
+            box-shadow: 0 0 60px rgba(0, 200, 255, 0.5),
+                        inset 0 0 30px rgba(0, 0, 0, 0.7);
+        }
+
+        .clicker-core {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, #0066ff 0%, #00ccff 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3.5rem;
+            color: white;
+            box-shadow: 0 0 30px rgba(0, 150, 255, 0.7);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .clicker-core::after {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 1%, transparent 10%);
+            animation: rotate 20s linear infinite;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(30, 30, 60, 0.8);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 25px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            border: 2px solid #3a3a7a;
+        }
+
+        .stat-box {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-box h3 {
+            font-size: 1.8rem;
+            color: #ffd700;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .stat-box p {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .upgrades {
+            background: rgba(20, 20, 40, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 25px;
+            border: 2px solid #3a3a7a;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .upgrades h2 {
+            color: #ffaa00;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #3a3a7a;
+            padding-bottom: 10px;
+        }
+
+        .upgrade-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(40, 40, 80, 0.7);
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            border-left: 5px solid #ffd700;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .upgrade-item:hover {
+            background: rgba(50, 50, 100, 0.9);
+            transform: translateX(5px);
+        }
+
+        .upgrade-info h4 {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .upgrade-info p {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .upgrade-cost {
+            background: linear-gradient(to right, #ff3300, #ff6600);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            box-shadow: 0 0 10px rgba(255, 100, 0, 0.5);
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, #ffd700, #ffaa00);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .auto-generators {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .generator {
+            background: rgba(30, 30, 60, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 2px solid #3a3a7a;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .generator:hover {
+            background: rgba(40, 40, 80, 0.9);
+            transform: translateY(-5px);
+        }
+
+        .generator i {
+            font-size: 2rem;
+            color: #00ccff;
+            margin-bottom: 10px;
+        }
+
+        .generator h4 {
+            color: #fff;
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+
+        .generator p {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .generator-cost {
+            color: #ffd700;
+            font-weight: bold;
+            margin-top: 8px;
+            font-size: 1.1rem;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .click-effect {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.8), transparent);
+            pointer-events: none;
+            opacity: 0;
+            z-index: 10;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(to right, #0066cc, #0099ff);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.5s;
+            max-width: 300px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>EPIC IDLE CLICKER</h1>
+            <p>Tap the core to generate energy. Upgrade to earn more!</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <h3 id="energyCount">0</h3>
+                <p>ENERGY</p>
+            </div>
+            <div class="stat-box">
+                <h3 id="energyPerClick">1</h3>
+                <p>PER CLICK</p>
+            </div>
+            <div class="stat-box">
+                <h3 id="energyPerSecond">0</h3>
+                <p>PER SECOND</p>
+            </div>
+        </div>
+        
+        <div class="main-click-area">
+            <div class="clicker" id="clicker">
+                <div class="clicker-core">
+                    <i class="fas fa-bolt"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="auto-generators">
+            <div class="generator" id="generator1">
+                <i class="fas fa-robot"></i>
+                <h4>Auto-Tapper</h4>
+                <p>Taps automatically</p>
+                <div class="generator-cost" id="generator1Cost">100</div>
+            </div>
+            <div class="generator" id="generator2">
+                <i class="fas fa-industry"></i>
+                <h4>Energy Plant</h4>
+                <p>Generates more energy</p>
+                <div class="generator-cost" id="generator2Cost">500</div>
+            </div>
+        </div>
+        
+        <div class="upgrades">
+            <h2>UPGRADES</h2>
+            <div class="upgrade-item" id="upgrade1">
+                <div class="upgrade-info">
+                    <h4>Reinforced Core</h4>
+                    <p>+2 energy per click</p>
+                </div>
+                <div class="upgrade-cost" id="upgrade1Cost">50</div>
+            </div>
+            <div class="upgrade-item" id="upgrade2">
+                <div class="upgrade-info">
+                    <h4>Plasma Conductor</h4>
+                    <p>+5 energy per click</p>
+                </div>
+                <div class="upgrade-cost" id="upgrade2Cost">200</div>
+            </div>
+            <div class="upgrade-item" id="upgrade3">
+                <div class="upgrade-info">
+                    <h4>Quantum Amplifier</h4>
+                    <p>+10 energy per click</p>
+                </div>
+                <div class="upgrade-cost" id="upgrade3Cost">1000</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">
+        Upgrade purchased!
+    </div>
+    
+    <script>
+        const gameState = {
+            energy: 0,
+            energyPerClick: 1,
+            energyPerSecond: 0,
+            upgrades: {
+                upgrade1: { cost: 50, multiplier: 2, purchased: false },
+                upgrade2: { cost: 200, multiplier: 5, purchased: false },
+                upgrade3: { cost: 1000, multiplier: 10, purchased: false }
+            },
+            generators: {
+                generator1: { cost: 100, rate: 1, count: 0 },
+                generator2: { cost: 500, rate: 5, count: 0 }
+            }
+        };
+
+        const elements = {
+            energyCount: document.getElementById('energyCount'),
+            energyPerClick: document.getElementById('energyPerClick'),
+            energyPerSecond: document.getElementById('energyPerSecond'),
+            clicker: document.getElementById('clicker'),
+            particles: document.getElementById('particles'),
+            notification: document.getElementById('notification')
+        };
+
+        const createParticle = (x, y) => {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+            elements.particles.appendChild(particle);
+            
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 2 + Math.random() * 3;
+            const size = 5 + Math.random() * 10;
+            
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            let opacity = 1;
+            const fadeOut = setInterval(() => {
+                opacity -= 0.05;
+                particle.style.opacity = opacity;
+                particle.style.left = `${parseFloat(particle.style.left) + Math.cos(angle) * speed}px`;
+                particle.style.top = `${parseFloat(particle.style.top) + Math.sin(angle) * speed}px`;
+                
+                if (opacity <= 0) {
+                    clearInterval(fadeOut);
+                    particle.remove();
+                }
+            }, 30);
+        };
+
+        const createClickEffect = (x, y) => {
+            const effect = document.createElement('div');
+            effect.className = 'click-effect';
+            effect.style.left = `${x - 25}px`;
+            effect.style.top = `${y - 25}px`;
+            document.body.appendChild(effect);
+            
+            let size = 50;
+            let opacity = 0.8;
+            
+            const expand = setInterval(() => {
+                size += 10;
+                opacity -= 0.1;
+                effect.style.width = `${size}px`;
+                effect.style.height = `${size}px`;
+                effect.style.left = `${x - size/2}px`;
+                effect.style.top = `${y - size/2}px`;
+                effect.style.opacity = opacity;
+                
+                if (opacity <= 0) {
+                    clearInterval(expand);
+                    effect.remove();
+                }
+            }, 30);
+        };
+
+        const showNotification = (message) => {
+            elements.notification.textContent = message;
+            elements.notification.classList.add('show');
+            setTimeout(() => {
+                elements.notification.classList.remove('show');
+            }, 2000);
+        };
+
+        const updateUI = () => {
+            elements.energyCount.textContent = Math.floor(gameState.energy).toLocaleString();
+            elements.energyPerClick.textContent = gameState.energyPerClick;
+            elements.energyPerSecond.textContent = gameState.energyPerSecond;
+            
+            document.getElementById('upgrade1Cost').textContent = gameState.upgrades.upgrade1.cost;
+            document.getElementById('upgrade2Cost').textContent = gameState.upgrades.upgrade2.cost;
+            document.getElementById('upgrade3Cost').textContent = gameState.upgrades.upgrade3.cost;
+            
+            document.getElementById('generator1Cost').textContent = gameState.generators.generator1.cost;
+            document.getElementById('generator2Cost').textContent = gameState.generators.generator2.cost;
+            
+            const upgradeElements = ['upgrade1', 'upgrade2', 'upgrade3'];
+            upgradeElements.forEach(id => {
+                const element = document.getElementById(id);
+                element.style.opacity = gameState.upgrades[id].purchased ? '0.5' : '1';
+                element.style.cursor = gameState.upgrades[id].purchased ? 'default' : 'pointer';
+            });
+        };
+
+        const handleClick = (event) => {
+            const rect = elements.clicker.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            createParticle(event.clientX, event.clientY);
+            createClickEffect(event.clientX, event.clientY);
+            
+            gameState.energy += gameState.energyPerClick;
+            
+            elements.clicker.style.animation = 'none';
+            setTimeout(() => {
+                elements.clicker.style.animation = 'pulse 0.2s';
+            }, 10);
+            
+            updateUI();
+        };
+
+        const purchaseUpgrade = (upgradeId) => {
+            const upgrade = gameState.upgrades[upgradeId];
+            
+            if (upgrade.purchased || gameState.energy < upgrade.cost) return;
+            
+            gameState.energy -= upgrade.cost;
+            gameState.energyPerClick += upgrade.multiplier;
+            upgrade.purchased = true;
+            upgrade.cost = Math.floor(upgrade.cost * 2.5);
+            
+            showNotification(`Upgrade purchased! +${upgrade.multiplier} per click`);
+            updateUI();
+        };
+
+        const purchaseGenerator = (generatorId) => {
+            const generator = gameState.generators[generatorId];
+            
+            if (gameState.energy < generator.cost) return;
+            
+            gameState.energy -= generator.cost;
+            generator.count++;
+            generator.cost = Math.floor(generator.cost * 1.5);
+            
+            gameState.energyPerSecond = 0;
+            Object.values(gameState.generators).forEach(g => {
+                gameState.energyPerSecond += g.count * g.rate;
+            });
+            
+            showNotification(`Generator purchased! +${generator.rate}/sec`);
+            updateUI();
+        };
+
+        const initEventListeners = () => {
+            elements.clicker.addEventListener('click', handleClick);
+            
+            document.getElementById('upgrade1').addEventListener('click', () => purchaseUpgrade('upgrade1'));
+            document.getElementById('upgrade2').addEventListener('click', () => purchaseUpgrade('upgrade2'));
+            document.getElementById('upgrade3').addEventListener('click', () => purchaseUpgrade('upgrade3'));
+            
+            document.getElementById('generator1').addEventListener('click', () => purchaseGenerator('generator1'));
+            document.getElementById('generator2').addEventListener('click', () => purchaseGenerator('generator2'));
+            
+            document.addEventListener('touchstart', (e) => {
+                if (e.target === elements.clicker) {
+                    const touch = e.touches[0];
+                    const event = new MouseEvent('click', {
+                        clientX: touch.clientX,
+                        clientY: touch.clientY
+                    });
+                    elements.clicker.dispatchEvent(event);
+                }
+            }, { passive: true });
+        };
+
+        const gameLoop = () => {
+            gameState.energy += gameState.energyPerSecond / 60;
+            updateUI();
+            requestAnimationFrame(gameLoop);
+        };
+
+        const createBackgroundParticles = () => {
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = `${Math.random() * 100}vw`;
+                particle.style.top = `${Math.random() * 100}vh`;
+                particle.style.width = `${2 + Math.random() * 4}px`;
+                particle.style.height = particle.style.width;
+                particle.style.opacity = '0.3';
+                particle.style.background = `radial-gradient(circle, rgba(255,215,0,0.${Math.floor(3 + Math.random() * 6)}), transparent)`;
+                elements.particles.appendChild(particle);
+                
+                let x = parseFloat(particle.style.left);
+                let y = parseFloat(particle.style.top);
+                
+                const floatParticle = () => {
+                    x += (Math.random() - 0.5) * 0.5;
+                    y += (Math.random() - 0.5) * 0.5;
+                    
+                    if (x < 0) x = 0;
+                    if (x > 100) x = 100;
+                    if (y < 0) y = 0;
+                    if (y > 100) y = 100;
+                    
+                    particle.style.left = `${x}vw`;
+                    particle.style.top = `${y}vh`;
+                    
+                    setTimeout(floatParticle, 100 + Math.random() * 200);
+                };
+                
+                floatParticle();
+            }
+        };
+
+        const init = () => {
+            updateUI();
+            initEventListeners();
+            createBackgroundParticles();
+            gameLoop();
+        };
+
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
